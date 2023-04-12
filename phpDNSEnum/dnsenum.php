@@ -34,26 +34,41 @@ if(count($argv) > 1){
 		
 		if(!file_exists($wordlist)){
 			die("Wordlist is not exists: " . $wordlist);
+		}else{
+			echo "Wordlist: " . $wordlist . "\n";
+		}
+		
+		$size = filesize($wordlist);
+		$threading = false;
+		
+		if($size > 5000000){
+			$threading = false;
 		}
 		
 		$f = fopen($wordlist, "rb");
-		$sword = stream_get_contents($f);
-		fclose($f);
-		
-		$words = explode("\n", $sword);
 		
 		echo "DNS Enumeration is starting ...\n";
+		$start = time();
 		
-		foreach($words as $sub){
-			$hostname = $sub . "." . $domain;
-			$check = gethostbyname($hostname);
-			
-			if($check != $hostname){
-				echo $hostname . "\n";   
+		if($f){
+			while(!feof($f)){
+				$sub = fgets($f);
+				$hostname = trim($sub, "\n") . "." . $domain;
+				$check = gethostbyname($hostname);
+				
+				if($check != $hostname){
+					echo $hostname . "\n";   
+				}
 			}
+			
+			fclose($f);
+		}else{
+			echo "Fail opening source. \n";
 		}
 		
-		echo "\n\nScan completed.";
+		$end = time();
+		
+		echo "...\nScan completed in " . ($end - $start) . " second(s).";
 	}
 }else{
 	die("Arg Error: Domain name is required. Example: 'php dnsenum.php google.com'");
