@@ -34,20 +34,89 @@ if(count($argv) > 1){
 		
 		if(!file_exists($wordlist)){
 			die("Wordlist is not exists: " . $wordlist);
-		}else{
-			echo "Wordlist: " . $wordlist . "\n";
 		}
 		
 		$size = filesize($wordlist);
-		$threading = false;
+		// $threading = false;
 		
-		if($size > 5000000){
-			$threading = false;
+		// if($size > 5000000){
+			// $threading = false;
+		// }
+		
+		$default = dns_get_record($domain);		
+		echo "\nDNS Recource Records:\n_______________________\n";
+		
+		// print_r($default);
+		
+		foreach($default as $d){
+			
+			switch($d["type"]){
+				case "A":
+					echo $d["type"] . "\t- " . $d["host"] . " - " . (isset($d["ip"]) ? $d["ip"] : "NONE" ) . " [". $d["type"] . "|" . $d["class"] ."] TTL=" . $d["ttl"] . "\n";
+				break;
+				
+				case "AAAA":
+					echo  $d["type"] . "\t- " . $d["host"] . " - " . (isset($d["ipv6"]) ? $d["ipv6"] : "NONE" ) . " [". $d["type"] . "|" . $d["class"] ."] TTL=" . $d["ttl"] . "\n";
+				break;
+				
+				case "TXT":
+					echo  $d["type"] . "\t- " . $d["host"] . " - " . (isset($d["txt"]) ? $d["txt"] : "NONE" ) . " [". $d["type"] . "|" . $d["class"] ."] TTL=" . $d["ttl"] . "\n";					
+				break;
+				
+				case "MX":
+					echo  $d["type"] . "\t- " . $d["host"] . " - " . (isset($d["target"]) ? $d["target"] : "NONE" ) . " [". $d["type"] . "|" . $d["class"] ."] TTL=" . $d["ttl"] . " Priority=". $d["pri"] ."\n";		
+				break;
+				
+				case "NS":
+					echo $d["type"] . "\t- " . $d["host"] . " - " . (isset($d["target"]) ? $d["target"] : "NONE" ) . " [". $d["type"] . "|" . $d["class"] ."] TTL=" . $d["ttl"] . "\n";		
+				break;
+				
+				// case "CNAME":
+					
+				// break;
+				
+				// case "PTR":
+				
+				// break;
+				
+				// case "HINFO":
+				
+				// break;
+				
+				// case "CAA":
+				
+				// break;
+				
+				case "SOA":
+				// print_r($d);
+					echo $d["type"] . "\t- " . $d["host"] . " - " . "mname(" . $d["mname"] . "):rname(" . $d["rname"] . ") [". $d["type"] . "|" . $d["class"] ."] TTL=" . $d["ttl"] . " Serial= ". $d["serial"] ." Min-TTL=". $d["minimum-ttl"] ." \n";
+				break;
+				
+				// case "A6":
+				
+				// break;
+				
+				// case "SRV":
+				
+				// break;
+				
+				// case "NAPTR":
+				
+				// break;
+				
+				default: 
+					print_r($d);
+				break;
+			}
+			
+			
 		}
 		
+		// die();
 		$f = fopen($wordlist, "rb");
 		
-		echo "DNS Enumeration is starting ...\n";
+		echo "\nWordlist: " . $wordlist;
+		echo "\nBrute Force DNS Enumeration is starting:\n____________________________________\n";
 		$start = time();
 		
 		if($f){
@@ -57,7 +126,7 @@ if(count($argv) > 1){
 				$check = gethostbyname($hostname);
 				
 				if($check != $hostname){
-					echo $hostname . "\n";   
+					echo $hostname . " - " . $check . "\n";   
 				}
 			}
 			
