@@ -67,8 +67,24 @@ if(count($argv) > 1){
 		}
 		
 		$end = time();
+		$total = $end - $start;
+		$hour = 0;
+		$min = 0;
+		$sec = $end - $start;
 		
-		echo "...\nScan completed in " . ($end - $start) . " second(s).";
+		if($total > 59){
+			$min = floor($total / 60);
+			$sec = $total - ($min * 60);
+			
+			if($min > 59){
+				$hour = floor($min / 60);
+				$min = $min - ($hour * 60);
+			}
+		}
+		
+		$full = $hour . "h" . $min . "m" . $sec . "s";
+		
+		echo "...\nScan completed in " . $full . ".";
 	}
 }else{
 	die("Arg Error: Domain name is required. Example: 'php dnsenum.php google.com'");
