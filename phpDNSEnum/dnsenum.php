@@ -42,9 +42,15 @@ if(count($argv) > 1){
 		// if($size > 5000000){
 			// $threading = false;
 		// }
-		
-		$default = dns_get_record($domain);		
 		echo "\nDNS Recource Records:\n_______________________\n";
+		
+		// $ptr = dns_get_record($domain,  DNS_NAPTR);
+		
+		// print_r($ptr);
+		
+		// die();
+		$default = dns_get_record($domain);		
+		
 		
 		// print_r($default);
 		
